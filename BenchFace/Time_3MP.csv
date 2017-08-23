@@ -1,0 +1,11 @@
+Smartphone;Tamanho;Algoritmo;Tempo;Erro
+GalaxyS4;3 MP;AES 128;5,0399;0,096
+GalaxyS4;3 MP;AES 192;5,9137;0,0712
+GalaxyS4;3 MP;AES 256;5,8303;0,2509
+GalaxyS4;3 MP;AES+RSA;5,8288;0,1548
+GalaxyS4;3 MP;Sem Cripto;5,0018;0,2939
+MotoX Style;3 MP;AES 128;5,2063;0,0455
+MotoX Style;3 MP;AES 192;5,678;0,0323
+MotoX Style;3 MP;AES 256;5,6364;0,0398
+MotoX Style;3 MP;AES+RSA;5,2737;0,0319
+MotoX Style;3 MP;Sem Cripto;5,2856;0,0254
