@@ -49,13 +49,6 @@ public class Resultado {
 		FileWriter fw = new FileWriter("all.csv", true);
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    PrintWriter out  = new PrintWriter(bw);
-//		System.out.println("sensitivity: "+sensitivity);
-//		System.out.println("specificity: "+specificity);
-//		System.out.println("precision: "+precision);
-//		System.out.println("FNR: "+FNR);
-//		System.out.println("FPR: "+FPR);
-//		System.out.println("F1: "+F1);
-//		System.out.println("Accuracy: "+accuracy);
 	    out.print(alg);
         out.print(","+specificity);
         out.print(","+sensitivity);
@@ -68,7 +61,6 @@ public class Resultado {
         out.flush();
         out.close();
 //        System.out.println("done all.csv!");
-		
 	}
 	
 	public void toAVG_CSV() throws IOException{
@@ -76,41 +68,17 @@ public class Resultado {
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    PrintWriter out  = new PrintWriter(bw);
 	    out.print(alg);
-        out.print(","+specificity);
-        out.print(","+sensitivity);
-        out.print(","+precision);
-        out.print(","+FPR);
-        out.print(","+FNR);
-        out.print(","+F1);
-        out.print(","+accuracy+",");
-
-//        System.out.println("specificityIC: "+getIntervaloConfianca(specificitySD));
-//        System.out.println("sensitivityIC: "+getIntervaloConfianca(sensitivitySD));
-//        System.out.println("precisionIC: "+getIntervaloConfianca(precisionSD));
-//        System.out.println("FPRIC: "+getIntervaloConfianca(FPRSD));
-//        System.out.println("FNRIC: "+getIntervaloConfianca(FNRSD));
-//        System.out.println("F1IC: "+getIntervaloConfianca(F1SD));
-//        System.out.println("accuracyIC: "+getIntervaloConfianca(accuracySD));
-//        
-//        out.print(""+getIntervaloConfianca(specificitySD));
-//        out.print(",");
-//        out.print(""+getIntervaloConfianca(sensitivitySD));
-//        out.print(",");
-//        out.print(""+getIntervaloConfianca(precisionSD));
-//        out.print(",");
-//        out.print(""+getIntervaloConfianca(FPRSD));
-//        out.print(",");
-//        out.print(""+getIntervaloConfianca(FNRSD));
-//        out.print(",");
-//        out.print(""+getIntervaloConfianca(F1SD));
-//        out.print(",");
-//        out.print(""+getIntervaloConfianca(accuracySD));
-//        out.print(",");
+        out.print(" , "+specificity);
+        out.print(" , "+sensitivity);
+        out.print(" , "+precision);
+        out.print(" , "+FPR);
+        out.print(" , "+FNR);
+        out.print(" , "+F1);
+        out.print(" , "+accuracy+" , ");
         out.println();
         out.flush();
         out.close();
         System.out.println("done avg!");
-		
 	}
 	
 	public void toCSV(boolean avg) throws IOException{
@@ -121,6 +89,20 @@ public class Resultado {
 		}
 	}
 
-	
 
+	public static void clearCSVS() throws IOException {
+		FileWriter fw = new FileWriter("result.csv", false);
+		BufferedWriter bw = new BufferedWriter(fw);
+		PrintWriter out  = new PrintWriter(bw);
+		out.print("");
+		out.flush();
+		out.close();
+
+		fw = new FileWriter("all.csv", false);
+		bw = new BufferedWriter(fw);
+		out  = new PrintWriter(bw);
+		out.print("");
+		out.flush();
+		out.close();
+	}
 }
