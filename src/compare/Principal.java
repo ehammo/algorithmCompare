@@ -25,7 +25,7 @@ public class Principal {
             ClassifierTypes.NAIVE_BAYES,
             ClassifierTypes.SMO };
 //	private static ClassifierTypes[] classifierType = {ClassifierTypes.SMO, ClassifierTypes.JRIP, ClassifierTypes.J48};
-//	private static ClassifierTypes[] classifierType = {ClassifierTypes.SMO};
+	// private static ClassifierTypes[] classifierType = {ClassifierTypes.SMO};
 
     private static Resultado media(MatrizConfusao[] resultados){
 		double sensitivity = 0,specificity = 0,precision = 0,FPR = 0,FNR = 0,F1 = 0,accuracy=0;

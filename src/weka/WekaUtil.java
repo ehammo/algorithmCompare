@@ -4,6 +4,8 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.supportVector.RBFKernel;
+import weka.classifiers.functions.supportVector.PolyKernel;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.rules.JRip;
 import weka.classifiers.rules.ZeroR;
@@ -27,6 +29,15 @@ public class WekaUtil {
     private static boolean knowsBestK() {
         return BEST_K != -1;
     }
+    private static String getKernel(int k) {
+        if (k == 1) {
+            return "_rbf";
+        } else if (k == 2){
+            return  "_poly2";
+        } else {
+            return "_default";
+        }
+    }
     private static String getAlgName(ClassifierTypes classifier, int k) {
         if (classifier.equals(ClassifierTypes.J48) || classifier.equals(ClassifierTypes.JRIP)) {
             if(pruned(k)){
@@ -34,6 +45,8 @@ public class WekaUtil {
             } else {
                 return classifier + "_unpruned";
             }
+        } else if (classifier.equals(ClassifierTypes.SMO)) {
+            return classifier + getKernel(k);
         } else if(classifier.equals(ClassifierTypes.IBK)) {
             return !knowsBestK() ? classifier + "_k_=_"+k : classifier + "_k_=_"+BEST_K;
         }
@@ -49,8 +62,10 @@ public class WekaUtil {
             if (ClassifierTypes.IBK.equals(aClassifierType)) {
                 if (!knowsBestK()) max_k = 30;
             } else if (ClassifierTypes.J48.equals(aClassifierType) ||
-                    ClassifierTypes.JRIP.equals(aClassifierType)) {
+                ClassifierTypes.JRIP.equals(aClassifierType)) {
                 max_k = 2;
+            } else if (ClassifierTypes.SMO.equals(aClassifierType)) {
+                max_k = 3;
             }
             for (int k = 1; k <= max_k; k++) {
                 Classifier classifier = WekaUtil.getBaseClassifier(aClassifierType);
@@ -66,6 +81,13 @@ public class WekaUtil {
                     ((JRip) classifier).setUsePruning(false);
                 } else if (aClassifierType.equals(ClassifierTypes.JRIP) && pruned(k)) {
                     ((JRip) classifier).setUsePruning(true);
+                } else if (aClassifierType.equals(ClassifierTypes.SMO) && k == 1) {
+                    RBFKernel rbfKernel = new RBFKernel();
+                    ((SMO) classifier).setKernel(rbfKernel);
+                } else if (aClassifierType.equals(ClassifierTypes.SMO) && k == 2) {
+                    PolyKernel polyKernel = new PolyKernel();
+                    polyKernel.setExponent(2);
+                    ((SMO) classifier).setKernel(polyKernel);
                 }
                 classifier.buildClassifier(instances);
                 ClassifierWrapper classifierWrapper = new ClassifierWrapper(classifier);
