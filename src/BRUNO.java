@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +11,7 @@ public class BRUNO {
 
 //	public static String[] csvs = {"Energia_3MP.csv","Energia_8.5MP.csv","Time_3MP.csv","Time_8.5MP.csv"};
 //	public static String[] pastas = {"BenchFace"};
-		public static String[] csvs = {"Energia_2MP.csv","Energia_8MP.csv","Time_2MP.csv","Time_8MP.csv"};	
+		public static String[] csvs = {"Energia_2MP.csv","Energia_8MP.csv","Time_2MP.csv","Time_8MP.csv"};
 		public static String[] pastas = {"BenchImage"};
 
 
@@ -53,7 +52,7 @@ public class BRUNO {
 							tentativa =((media*quantidade) - total);
 							System.out.println("hey");
 						}else{
-							tentativa = rangeMin + (rangeMax - rangeMin) * r.nextDouble();				
+							tentativa = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
 						}
 						if(tentativa<Math.floor(media)){
 							i--;

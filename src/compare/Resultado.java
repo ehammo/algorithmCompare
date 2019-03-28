@@ -1,17 +1,15 @@
+package compare;
+
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
 
 public class Resultado {
 	public double sensitivity = 0,specificity = 0,precision = 0,FPR = 0,FNR = 0,F1 = 0,accuracy=0;
 	public double sensitivitySD = 0,specificitySD = 0,precisionSD = 0,FPRSD = 0,FNRSD = 0,F1SD = 0,accuracySD=0;
 	public double instances=0;
-	
+
 	public String alg;
 
 	public void sd(MatrizConfusao[] resultados){
@@ -40,7 +38,7 @@ public class Resultado {
 		F1SD = Math.sqrt(variancia6/(resultados.length-1));
 		accuracySD = Math.sqrt(variancia7/(resultados.length-1));
 	}
-	
+
 	public double getIntervaloConfianca(double sd){
 		return 1.96*sd/Math.sqrt(instances);
 	}
@@ -62,7 +60,7 @@ public class Resultado {
         out.close();
 //        System.out.println("done all.csv!");
 	}
-	
+
 	public void toAVG_CSV() throws IOException{
 		FileWriter fw = new FileWriter("result.csv", true);
 	    BufferedWriter bw = new BufferedWriter(fw);
@@ -80,7 +78,7 @@ public class Resultado {
         out.close();
         System.out.println("done avg!");
 	}
-	
+
 	public void toCSV(boolean avg) throws IOException{
 		if(avg){
 			toAVG_CSV();

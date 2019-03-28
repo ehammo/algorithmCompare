@@ -11,7 +11,7 @@ import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.Instances;
 
-import Principal.ClassifierTypes;
+import compare.Principal.ClassifierTypes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,27 +20,27 @@ import java.util.Random;
  * Created by Gio on 11/05/2017.
  */
 public class WekaUtil {
-    private static int BEST_K = 4;
+    private static int BEST_K = 5;
     private static boolean pruned(int k) {
         return k == 1;
     }
     private static boolean knowsBestK() {
         return BEST_K != -1;
     }
-    private static String getAlgName(Principal.ClassifierTypes classifier, int k) {
+    private static String getAlgName(ClassifierTypes classifier, int k) {
         if (classifier.equals(ClassifierTypes.J48) || classifier.equals(ClassifierTypes.JRIP)) {
             if(pruned(k)){
-                return classifier + " pruned";
+                return classifier + "_pruned";
             } else {
-                return classifier + " unpruned";
+                return classifier + "_unpruned";
             }
         } else if(classifier.equals(ClassifierTypes.IBK)) {
-            return classifier + " k = "+k;
+            return !knowsBestK() ? classifier + "_k_=_"+k : classifier + "_k_=_"+BEST_K;
         }
         return classifier.toString();
     }
 
-    public static ArrayList<ClassifierWrapper> buildClassifiers(Principal.ClassifierTypes[] classifierType, Instances instances) throws Exception {
+    public static ArrayList<ClassifierWrapper> buildClassifiers(ClassifierTypes[] classifierType, Instances instances) throws Exception {
         ArrayList<ClassifierWrapper> classifiers = new ArrayList<>();
         for (ClassifierTypes aClassifierType : classifierType) {
             // This is used for IBK model to find best k;

@@ -17,7 +17,7 @@ public class ClassifierWrapper {
     }
 
     public void saveToFile() {
-        Debug.saveToFile(this.name, this.classifier);
+        if (this.classifier != null && this.name != null) Debug.saveToFile(this.name+".model", this.classifier);
     }
 
 }

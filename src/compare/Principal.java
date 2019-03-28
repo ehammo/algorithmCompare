@@ -1,3 +1,5 @@
+package compare;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -68,11 +70,12 @@ public class Principal {
 		String lastClassifierType = "";
 		ArrayList<ClassifierWrapper> sameTypeClassifiers = new ArrayList<>();
         for (ClassifierWrapper wrapper : classifiers) {
-            Class classifierClass = wrapper.classifier.getClass();
+            Class<? extends Classifier> classifierClass = wrapper.classifier.getClass();
             if (!lastClassifierType.equals(classifierClass.getName())) {
                 saveBestClassifier(sameTypeClassifiers);
                 sameTypeClassifiers.clear();
                 lastClassifierType = classifierClass.getName();
+                System.out.println("start: "+lastClassifierType);
             }
             MatrizConfusao[] confusao = new MatrizConfusao[SEEDS];
             //This for is used to change the seed used on crossValidation
@@ -111,5 +114,6 @@ public class Principal {
             resultado.toCSV(true);
             sameTypeClassifiers.add(wrapper);
         }
+        saveBestClassifier(sameTypeClassifiers);
 	}
 }

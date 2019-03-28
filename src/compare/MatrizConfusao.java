@@ -1,3 +1,4 @@
+package compare;
 
 public class MatrizConfusao {
 
@@ -7,15 +8,15 @@ public class MatrizConfusao {
 	private double FN;
 	private double F1;
 	private double precision;
-	
-	
+
+
 	public MatrizConfusao(double TN,double  FN,double  FP,double  TP, double precision, double F1){
 		this.FN=FN;
 		this.TP=TP;
 		this.TN=TN;
 		this.FP=FP;
 		this.F1 = F1;
-		this.precision = precision;	
+		this.precision = precision;
 	}
 
 	public double getSpecificity(){
@@ -37,7 +38,7 @@ public class MatrizConfusao {
 	public double getPrecision(){
 		return precision;
 	}
-	
+
 	public double getF1(){
 		return F1;
 	}
@@ -53,7 +54,7 @@ public class MatrizConfusao {
 	public double getAccuracy(){
 		return (TP+TN)/(TP+TN+FP+FN);
 	}
-	
+
 	public Resultado getResult(){
 		Resultado result = new Resultado();
 		result.accuracy = getAccuracy();
@@ -63,9 +64,9 @@ public class MatrizConfusao {
 		result.precision = getPrecision();
 		result.sensitivity = getSensitivity();
 		result.specificity = getSpecificity();
-		
-		
+
+
 		return result;
 	}
-	
+
 }
