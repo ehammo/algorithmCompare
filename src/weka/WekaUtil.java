@@ -10,6 +10,7 @@ import weka.classifiers.lazy.IBk;
 import weka.classifiers.rules.JRip;
 import weka.classifiers.rules.ZeroR;
 import weka.classifiers.trees.J48;
+import weka.classifiers.trees.j48.ClassifierTree;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -137,6 +138,8 @@ public class WekaUtil {
         	classifierModel = new ZeroR();
         } else if(desiredModel.equals(ClassifierTypes.SMO)){
             classifierModel = new SMO();
+        } else if (desiredModel.equals(ClassifierTypes.DEEP)){
+            // classifierModel = new Dl4jMlpClassifier();
         } else {
             System.err.println("Undefined model " + desiredModel);
         }

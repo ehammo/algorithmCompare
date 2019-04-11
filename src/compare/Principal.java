@@ -13,7 +13,7 @@ import weka.core.converters.ConverterUtils.DataSource;
 public class Principal {
 
     public enum ClassifierTypes {
-        IBK,J48, JRIP, ZERO_R, NAIVE_BAYES, SMO;
+        IBK,J48, JRIP, ZERO_R, NAIVE_BAYES, SMO, DEEP;
     }
 
     private static final int SEEDS = 30;
