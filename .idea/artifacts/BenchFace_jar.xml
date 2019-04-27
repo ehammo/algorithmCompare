@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BenchFace.jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BenchFace_jar</output-path>
+    <root id="archive" name="algCompare.jar">
+      <element id="module-output" name="algCompare" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/libsvm.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/opencv-310.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/jre1.8.0_144/lib/ext/jfxrt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/weka.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
