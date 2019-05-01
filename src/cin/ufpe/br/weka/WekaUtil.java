@@ -1,4 +1,4 @@
-package weka;
+package cin.ufpe.br.weka;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -13,7 +13,7 @@ import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.Instances;
 
-import compare.Retreinamento.ClassifierTypes;
+import cin.ufpe.br.compare.Retreinamento.ClassifierTypes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -92,6 +92,7 @@ public class WekaUtil {
                 classifier.buildClassifier(instances);
                 ClassifierWrapper classifierWrapper = new ClassifierWrapper(classifier);
                 classifierWrapper.name = getAlgName(aClassifierType, k);
+                classifierWrapper.simple_name = aClassifierType.name();
                 classifiers.add(classifierWrapper);
             }
         }

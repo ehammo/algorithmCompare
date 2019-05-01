@@ -1,4 +1,4 @@
-package compare;
+package cin.ufpe.br.compare;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

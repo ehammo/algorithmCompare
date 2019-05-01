@@ -1,4 +1,4 @@
-package compare;
+package cin.ufpe.br.compare;
 
 public class MatrizConfusao {
 

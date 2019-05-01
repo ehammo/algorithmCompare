@@ -15,27 +15,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library name="weka.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/weka.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="jfxrt.jar">
-        <CLASSES>
-          <root url="jar://C:/Program Files/Java/jre1.8.0_144/lib/ext/jfxrt.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library">
-      <library name="libsvm.jar">
+      <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/libsvm.jar!/" />
         </CLASSES>
@@ -52,6 +34,15 @@
         <SOURCES>
           <root url="jar://$MODULE_DIR$/libs/opencv-310.jar!/" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/old_weka.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
