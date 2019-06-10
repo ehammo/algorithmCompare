@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 public class Resultado {
 	public double sensitivity = 0,specificity = 0,precision = 0,FPR = 0,FNR = 0,F1 = 0,accuracy=0;
@@ -43,50 +44,32 @@ public class Resultado {
 		return 1.96*sd/Math.sqrt(instances);
 	}
 
-	public void toALL_CSV() throws IOException{
-		FileWriter fw = new FileWriter("all.csv", true);
-	    BufferedWriter bw = new BufferedWriter(fw);
-	    PrintWriter out  = new PrintWriter(bw);
-	    out.print(alg);
-        out.print(","+specificity);
-        out.print(","+sensitivity);
-        out.print(","+precision);
-        out.print(","+FPR);
-        out.print(","+FNR);
-        out.print(","+F1);
-        out.print(","+accuracy);
-        out.println();
-        out.flush();
-        out.close();
-//        System.out.println("done all.csv!");
-	}
-
-	public void toAVG_CSV() throws IOException{
-		FileWriter fw = new FileWriter("result.csv", true);
-	    BufferedWriter bw = new BufferedWriter(fw);
-	    PrintWriter out  = new PrintWriter(bw);
-	    out.print(alg);
-        out.print(" , "+specificity);
-        out.print(" , "+sensitivity);
-        out.print(" , "+precision);
-        out.print(" , "+FPR);
-        out.print(" , "+FNR);
-        out.print(" , "+F1);
-        out.print(" , "+accuracy+" , ");
-        out.println();
-        out.flush();
-        out.close();
-        System.out.println("done avg!");
-	}
-
 	public void toCSV(boolean avg) throws IOException{
-		if(avg){
-			toAVG_CSV();
-		}else{
-			toALL_CSV();
+		if (avg) {
+			toCSV("result.csv");
+		} else {
+			toCSV("all.csv");
 		}
 	}
 
+	private void toCSV(String file) throws IOException{
+		FileWriter fw = new FileWriter(file, true);
+		BufferedWriter bw = new BufferedWriter(fw);
+		PrintWriter out  = new PrintWriter(bw);
+
+		out.print(alg + " , ");
+		out.print(specificity + " , ");
+		out.print(sensitivity + " , ");
+		out.print(precision + " , ");
+		out.print(FPR + " , ");
+		out.print(FNR + " , ");
+		out.print(F1 + " , ");
+		out.print(accuracy);
+		out.println();
+		out.flush();
+		out.close();
+		if(!file.equals("all.csv")) System.out.println(String.format("Done %s", file));
+	}
 
 	public static void clearCSVS() throws IOException {
 		FileWriter fw = new FileWriter("result.csv", false);

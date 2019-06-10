@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import cin.ufpe.br.statistic.StatisticTests;
 import cin.ufpe.br.weka.ClassifierWrapper;
 import cin.ufpe.br.weka.WekaUtil;
 import weka.classifiers.Classifier;
@@ -18,25 +19,30 @@ public class Retreinamento {
 
 
     public enum ClassifierTypes {
-        IBK,J48, JRIP, ZERO_R, NAIVE_BAYES, SMO, DEEP;
+        IBK, J48, JRIP, ZERO_R,
+        NAIVE_BAYES, SMO_poly, SMO_rbf,
+        MLP_1hidden, MLP_3hidden, RANDOMFOREST;
     }
 
     private static final int SEEDS = 30;
 
 //    private static ClassifierTypes[] classifierType = {
-//	        ClassifierTypes.IBK,
-//            ClassifierTypes.J48,
-//            ClassifierTypes.JRIP,
-//            ClassifierTypes.ZERO_R,
-//            ClassifierTypes.NAIVE_BAYES,
-//            ClassifierTypes.SMO };
+//	        ClassifierTypes.SMO,
+//            ClassifierTypes.MLP
+//    };
 
     private static ClassifierTypes[] classifierType = {
-            ClassifierTypes.IBK,
-            ClassifierTypes.J48,
-            ClassifierTypes.JRIP,
+//            ClassifierTypes.RANDOMFOREST,
+//            ClassifierTypes.MLP_1hidden,
+//            ClassifierTypes.MLP_3hidden,
             ClassifierTypes.NAIVE_BAYES,
-            ClassifierTypes.SMO };
+            ClassifierTypes.IBK,
+//            ClassifierTypes.J48,
+            ClassifierTypes.JRIP,
+//            ClassifierTypes.SMO_poly,
+//            ClassifierTypes.SMO_rbf,
+
+    };
 
     private static Resultado media(MatrizConfusao[] resultados){
 		double sensitivity = 0,specificity = 0,precision = 0,FPR = 0,FNR = 0,F1 = 0,accuracy=0;
@@ -104,11 +110,14 @@ public class Retreinamento {
 
     public static boolean retreinamento() {
         try {
+            StatisticTests statisticTests = new StatisticTests();
             DataSource source = new DataSource("database_ic.csv");
             Instances data = source.getDataSet();
             data.setClassIndex(data.numAttributes()-1);
             Resultado.clearCSVS();
+            System.out.println("Start training");
             ArrayList<ClassifierWrapper> classifiers = WekaUtil.buildClassifiers(classifierType, data);
+            System.out.println("End training");
             String lastClassifierType = "";
             ArrayList<ClassifierWrapper> sameTypeClassifiers = new ArrayList<>();
             clearModels();
@@ -118,7 +127,7 @@ public class Retreinamento {
                     saveBestClassifier(sameTypeClassifiers);
                     sameTypeClassifiers.clear();
                     lastClassifierType = classifierClass.getName();
-                    System.out.println("start: "+lastClassifierType);
+                    System.out.println("start testing "+lastClassifierType);
                 }
                 MatrizConfusao[] confusao = new MatrizConfusao[SEEDS];
                 //This for is used to change the seed used on crossValidation
@@ -145,9 +154,10 @@ public class Retreinamento {
                     }
 
                     confusao[j - 1] = new MatrizConfusao(TN, FN, FP, TP, precision, F1);
-                    Resultado result = confusao[j - 1].getResult();
-                    result.alg = wrapper.name;
-                    result.toCSV(false);
+                    Resultado resultado = confusao[j - 1].getResult();
+                    resultado.alg = wrapper.name;
+                    statisticTests.add(resultado);
+                    resultado.toCSV(false);
                 }
                 //Calculate average
                 Resultado resultado = media(confusao);
@@ -158,10 +168,16 @@ public class Retreinamento {
                 sameTypeClassifiers.add(wrapper);
             }
             saveBestClassifier(sameTypeClassifiers);
+            statisticTests.algorithmsRank();
+
             return true;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
+
+
     }
 
 	public static void main(String[] args) {
