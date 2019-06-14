@@ -7,6 +7,7 @@ import javanpst.tests.StatisticalTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ExportedFriedmanTest extends StatisticalTest {
 
@@ -290,15 +291,35 @@ public class ExportedFriedmanTest extends StatisticalTest {
         }
     }
 
-    public boolean[] getMCP(int length, ArrayList<String> algNames) {
+    public boolean[] getMCPAvg(int length) {
         boolean[] report = new boolean[length];
         int i=0;
+        System.out.println(String.valueOf(this.criticalZ95));
+        for(int first = 0; first < this.data.getColumns() - 1; ++first) {
+            for(int second = first + 1; second < this.data.getColumns(); ++second) {
+                if(i>=length) break;
+                double value1 = this.avgRanks[first]/this.data.getColumns();
+                double value2 = this.avgRanks[second]/this.data.getColumns();
+                double Z = Math.abs(value1 - value2);
+                report[i] = Z >= this.criticalZ95;
+                i++;
+            }
+        }
+        return report;
+    }
+
+    HashMap<String, Boolean> getMCP(int length, ArrayList<String> algnames) {
+        HashMap<String, Boolean> report = new HashMap<>();
+        int i=0;
+        System.out.println(String.valueOf(this.criticalZ95));
         for(int first = 0; first < this.data.getColumns() - 1; ++first) {
             for(int second = first + 1; second < this.data.getColumns(); ++second) {
                 if(i>=length) break;
                 double Z = Math.abs(this.avgRanks[first] - this.avgRanks[second]);
-                report[i] = Z >= this.criticalZ95;
-//                System.out.println(algNames.get(first)+"vs"+algNames.get(second)+"="+report[i]);
+                String key = algnames.get(first)+"-"+algnames.get(second);
+                String reverse_key = algnames.get(second)+"-"+algnames.get(first);
+                report.put(key, (Z >= this.criticalZ95));
+                report.put(reverse_key, (Z >= this.criticalZ95));
                 i++;
             }
         }

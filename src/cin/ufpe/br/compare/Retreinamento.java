@@ -26,56 +26,52 @@ public class Retreinamento {
 
     private static final int SEEDS = 30;
 
-//    private static ClassifierTypes[] classifierType = {
-//	        ClassifierTypes.SMO,
-//            ClassifierTypes.MLP
-//    };
-
     private static ClassifierTypes[] classifierType = {
-//            ClassifierTypes.RANDOMFOREST,
-//            ClassifierTypes.MLP_1hidden,
-//            ClassifierTypes.MLP_3hidden,
+            ClassifierTypes.RANDOMFOREST,
+            ClassifierTypes.MLP_1hidden,
+            ClassifierTypes.MLP_3hidden,
             ClassifierTypes.NAIVE_BAYES,
             ClassifierTypes.IBK,
-//            ClassifierTypes.J48,
+            ClassifierTypes.J48,
             ClassifierTypes.JRIP,
-//            ClassifierTypes.SMO_poly,
-//            ClassifierTypes.SMO_rbf,
-
+            ClassifierTypes.SMO_poly,
+            ClassifierTypes.SMO_rbf
     };
 
     private static Resultado media(MatrizConfusao[] resultados){
 		double sensitivity = 0,specificity = 0,precision = 0,FPR = 0,FNR = 0,F1 = 0,accuracy=0;
-		for(int i=0;i<resultados.length;i++){
-			if(resultados[i]!=null){
-				sensitivity+=resultados[i].getSensitivity();
-				specificity+=resultados[i].getSpecificity();
-				precision+=resultados[i].getPrecision();
-				FPR+=resultados[i].getFPR();
-				FNR+=resultados[i].getFNR();
-				F1+=resultados[i].getF1();
-				accuracy+=resultados[i].getAccuracy();
-			}
-		}
+        for (MatrizConfusao matrizConfusao : resultados) {
+            if (matrizConfusao != null) {
+                sensitivity += matrizConfusao.getSensitivity();
+                specificity += matrizConfusao.getSpecificity();
+                precision += matrizConfusao.getPrecision();
+                FPR += matrizConfusao.getFPR();
+                FNR += matrizConfusao.getFNR();
+                F1 += matrizConfusao.getF1();
+                accuracy += matrizConfusao.getAccuracy();
+            }
+        }
 		Resultado resultado = new Resultado();
-		resultado.sensitivity = (sensitivity/=resultados.length);
-		resultado.specificity = (specificity/=resultados.length);
-		resultado.precision = (precision/=resultados.length);
-		resultado.FPR = (FPR/=resultados.length);
-		resultado.FNR = (FNR/=resultados.length);
-		resultado.F1 = (F1/=resultados.length);
-		resultado.accuracy = (accuracy/=resultados.length);
+		resultado.sensitivity = (sensitivity/resultados.length);
+		resultado.specificity = (specificity/resultados.length);
+		resultado.precision = (precision/resultados.length);
+		resultado.FPR = (FPR/resultados.length);
+		resultado.FNR = (FNR/resultados.length);
+		resultado.F1 = (F1/resultados.length);
+		resultado.accuracy = (accuracy/resultados.length);
 		return resultado;
 	}
 
-	public static ArrayList<File> findModels(){
+	private static ArrayList<File> findModels(){
         ArrayList<File> files = new ArrayList<>();
         File folder = new File(System.getProperty("user.dir"));
-        File fList[] = folder.listFiles();
-        for (int i = 0; i < fList.length; i++) {
-            String pes = fList[i].getName();
-            if (pes.endsWith(".model")) {
-                files.add(fList[i].getAbsoluteFile());
+        File[] fList = folder.listFiles();
+        if (fList != null) {
+            for (File file : fList) {
+                String pes = file.getName();
+                if (pes.endsWith(".model")) {
+                    files.add(file.getAbsoluteFile());
+                }
             }
         }
         return files;
@@ -111,6 +107,7 @@ public class Retreinamento {
     public static boolean retreinamento() {
         try {
             StatisticTests statisticTests = new StatisticTests();
+            statisticTests.algorithmsRank();
             DataSource source = new DataSource("database_ic.csv");
             Instances data = source.getDataSet();
             data.setClassIndex(data.numAttributes()-1);
@@ -130,8 +127,11 @@ public class Retreinamento {
                     System.out.println("start testing "+lastClassifierType);
                 }
                 MatrizConfusao[] confusao = new MatrizConfusao[SEEDS];
+
+                long testTime = 0;
                 //This for is used to change the seed used on crossValidation
                 for (int j = 1; j <= SEEDS; j++) {
+                    long testTimeStart = System.currentTimeMillis();
                     // Evaluate classifier using 10-fold cross-validation
                     Evaluation evaluation = WekaUtil.crossValidateModel(wrapper.classifier, data, 10, new Random(j));
                     double[][] matrix = evaluation.confusionMatrix();
@@ -156,28 +156,28 @@ public class Retreinamento {
                     confusao[j - 1] = new MatrizConfusao(TN, FN, FP, TP, precision, F1);
                     Resultado resultado = confusao[j - 1].getResult();
                     resultado.alg = wrapper.name;
+                    resultado.tuningTrainingTime = wrapper.tuningAndTrainingTime;
+                    testTime += System.currentTimeMillis() - testTimeStart;
                     statisticTests.add(resultado);
                     resultado.toCSV(false);
                 }
                 //Calculate average
                 Resultado resultado = media(confusao);
                 wrapper.accuracy = resultado.accuracy;
-    //			resultado.sd(confusao);
                 resultado.alg = wrapper.name;
+                resultado.testTime = testTime/30;
+                statisticTests.addTestTime(resultado);
                 resultado.toCSV(true);
                 sameTypeClassifiers.add(wrapper);
             }
             saveBestClassifier(sameTypeClassifiers);
             statisticTests.algorithmsRank();
-
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
             return false;
         }
-
-
     }
 
 	public static void main(String[] args) {

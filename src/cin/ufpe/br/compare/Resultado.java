@@ -11,7 +11,20 @@ public class Resultado {
 	public double sensitivitySD = 0,specificitySD = 0,precisionSD = 0,FPRSD = 0,FNRSD = 0,F1SD = 0,accuracySD=0;
 	public double instances=0;
 
+	public long tuningTrainingTime, testTime;
+
 	public String alg;
+	public Resultado(){};
+	public Resultado(String[] results) {
+		alg = results[0].trim();
+		specificity = Double.parseDouble(results[1]);
+		sensitivity = Double.parseDouble(results[2]);
+		precision = Double.parseDouble(results[3]);
+		FPR = Double.parseDouble(results[4]);
+		FNR = Double.parseDouble(results[5]);
+		F1 = Double.parseDouble(results[6]);
+		accuracy = Double.parseDouble(results[7]);
+	}
 
 	public void sd(MatrizConfusao[] resultados){
 		double variancia1=0.0;

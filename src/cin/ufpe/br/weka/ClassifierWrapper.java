@@ -6,6 +6,7 @@ import weka.core.Debug;
 public class ClassifierWrapper {
 
     public Classifier classifier;
+    public long tuningAndTrainingTime;
     public String name;
     public String simple_name;
     public double accuracy = 0;

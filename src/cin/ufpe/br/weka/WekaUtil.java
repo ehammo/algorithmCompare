@@ -38,6 +38,7 @@ public class WekaUtil {
         gs.setLogFile(new File("GridSearchLog.txt"));
         for (ClassifierTypes aClassifierType : classifierType) {
             System.out.println("Start grid search for "+aClassifierType.toString());
+            long tuningTrainingTimeStart = System.currentTimeMillis();
             Classifier classifier = WekaUtil.getBaseClassifier(aClassifierType);
 
             if (aClassifierType.equals(ClassifierTypes.IBK)) {
@@ -72,6 +73,7 @@ public class WekaUtil {
             gs.buildClassifier(instances);
             classifier = gs.getBestClassifier();
             ClassifierWrapper classifierWrapper = new ClassifierWrapper(classifier);
+            classifierWrapper.tuningAndTrainingTime = System.currentTimeMillis() - tuningTrainingTimeStart;
             classifierWrapper.simple_name = aClassifierType.name();
             classifierWrapper.name = aClassifierType.name();
             classifiers.add(classifierWrapper);

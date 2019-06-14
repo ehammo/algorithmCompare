@@ -2,36 +2,50 @@ package cin.ufpe.br.statistic;
 
 import cin.ufpe.br.compare.Resultado;
 import javanpst.data.structures.dataTable.DataTable;
-import javanpst.tests.multiple.friedmanTest.FriedmanTest;
 import javanpst.tests.oneSample.wilcoxonTest.WilcoxonTest;
 //import javanpst.tests.multiple.friedmanTest.FriedmanTest;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class StatisticTests {
 
-    LinkedHashMap<String,ArrayList<Double>> wilcoxonData = new LinkedHashMap<>();
-    ArrayList<String> algnames = new ArrayList<>();
-    DataTable data = new DataTable();
-    int rows, cols= 0;
+    private LinkedHashMap<String,ArrayList<Double>> friedmanData = new LinkedHashMap<>();
+    private HashMap<String, Long> trainingTimes = new HashMap<>();
+    private HashMap<String, Long> testTimes = new HashMap<>();
+    private HashMap<Integer, ArrayList<Integer>> finalRank = new HashMap<>();
+
+    private ArrayList<String> algnames = new ArrayList<>();
+    private DataTable data = new DataTable();
+    private int rows, cols= 0;
 
 
     public StatisticTests(){}
 
+    public LinkedHashMap<String, ArrayList<Double>> getFriedmanData() {
+        return friedmanData;
+    }
+
     public void add(Resultado resultado){
-        ArrayList<Double> currentData = wilcoxonData.get(resultado.alg);
+        ArrayList<Double> currentData = friedmanData.get(resultado.alg);
         if (currentData == null) {
+            trainingTimes.put(resultado.alg, resultado.tuningTrainingTime);
             algnames.add(cols, resultado.alg);
             currentData = new ArrayList<>();
             cols++;
             rows = 0;
         }
         currentData.add(resultado.accuracy);
-        wilcoxonData.put(resultado.alg,currentData);
+        friedmanData.put(resultado.alg,currentData);
         rows++;
     }
 
-    public static double[] toPrimitive(ArrayList<Double> arrayList) {
+    public void addTestTime(Resultado resultado) {
+        testTimes.put(resultado.alg, resultado.testTime);
+    }
+
+    private static double[] toPrimitive(ArrayList<Double> arrayList) {
         double[] target = new double[arrayList.size()];
         for (int i = 0; i < target.length; i++) {
             target[i] = arrayList.get(i);
@@ -40,103 +54,96 @@ public class StatisticTests {
     }
 
     private void friedmanToData() {
-        Integer lastUsedCol = 0;
+        int lastUsedCol = 0;
         data.setDimensions(rows,cols);
-        for(ArrayList<Double> array : wilcoxonData.values()){
+        for(ArrayList<Double> array : friedmanData.values()){
             data.setColumn(lastUsedCol,toPrimitive(array));
             lastUsedCol++;
         }
         System.out.println("Done StatisticTests");
     }
 
-    public int combination() {
+    public void friedmanToDataFromCsv() {
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(new File("all.csv")));
+            Stream<String> lines = in.lines();
+            lines.forEach(line -> {
+                String[] columns = line.split(",");
+                Resultado resultado = new Resultado(columns);
+                add(resultado);
+            });
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int combination() {
         return cols*(cols-1) / 2;
     }
 
     /*
-    *
     * Rank this algs
-    *
     * */
-    public void algorithmsRank() throws IOException {
+    public void algorithmsRank() {
+        if(friedmanData.size() == 0) friedmanToDataFromCsv();
         friedmanToData();
-        int length = combination();
-        System.out.println("Lenght="+length);
         ExportedFriedmanTest test = new ExportedFriedmanTest(data);
+        int length = combination();
         test.doTest();
-        double[] rank = test.getAvgRank();
-        boolean[] mcp = test.getMCP(length, algnames);
-        for(int i = 0; i< cols; i++) {
-            for(int j = i+1; j< cols; j++){
-                if (rank[i] < rank[j]) {
-                    double aux = rank[i];
-                    rank[i] = rank[j];
-                    rank[j] = aux;
+        if(test.isPerformed()){
+            System.out.println(test.printReport());
+            double[] rank = test.getAvgRank();
+            HashMap<String, Boolean> mcp = test.getMCP(length, algnames);
+            for(int i = 0; i< cols; i++) {
+                for(int j = i+1; j< cols; j++){
+                    if (rank[i] < rank[j]) {
+                        double aux = rank[i];
+                        rank[i] = rank[j];
+                        rank[j] = aux;
 
-                    String auxString = algnames.get(i);
-                    algnames.set(i, algnames.get(j));
-                    algnames.set(j, auxString);
+                        String auxString = algnames.get(i);
+                        algnames.set(i, algnames.get(j));
+                        algnames.set(j, auxString);
+                    }
                 }
             }
-        }
-        for (int i = 0, pos = 1; i<cols; i++) {
-            if (i > 0 && ((rank[i-1] == rank[i]) || mcp[get(i-1,i)])) {
-               pos = i;
+
+            for (int i = 0, pos = 1; i<cols; i++) {
+                if(i > 0 && pos > 1) {
+                    boolean notStatisticDiff = !isStatisticalDifferent(algnames, mcp, i, pos-1);
+                    if ((rank[i-1] == rank[i]) || notStatisticDiff) {
+                        pos = pos-1;
+                    }
+                }
+                long trainingTime = trainingTimes.getOrDefault(algnames.get(i), 0L);
+                long testTime = testTimes.getOrDefault(algnames.get(i), 0L);
+                System.out.print(pos+":"+algnames.get(i)+" value: "+rank[i]);
+                System.out.println(" train: "+trainingTime+" test: "+testTime);
+                ArrayList<Integer> algList = finalRank.getOrDefault(pos, new ArrayList<>());
+                algList.add(i);
+                finalRank.put(pos, algList);
+                pos = pos+1;
             }
-            System.out.println(pos+":"+algnames.get(i));
-            pos = pos+1;
         }
-        test.getMCP(length, algnames);
-//        int alg1 = 0 , alg2 = 0;
-//      int[] rank = new int[cols];
-//         for (int i = 0; i < length; i++) {
-//            System.out.println(i+"/"+length);
-//            alg2++;
-//            if (alg2 == cols) {
-//                alg1++;
-//                alg2 = alg1 + 1;
-//            }
-//
-//            DataTable dataTable = new DataTable();
-//            dataTable.setDimensions(rows, 2);
-//            dataTable.setColumn(0, data.getColumn(alg1));
-//            dataTable.setColumn(1, data.getColumn(alg2));
-//            String alg1Name = algnames.get(alg1);
-//            String alg2Name = algnames.get(alg2);
-//            System.out.println("\nComparing "+alg1Name+" with "+alg2Name);
-//            int whoIsBetter = wilcoxon(dataTable, alg1Name, alg2Name);
-//            if (whoIsBetter != 0) {
-//               rank[alg1] += whoIsBetter;
-//               rank[alg2] += whoIsBetter*-1;
-//            }
-//        }
-//        System.out.println("pre-result");
-//        for (int i = 0; i<cols; i++) {
-//            System.out.println(algnames.get(i));
-//            System.out.println(rank[i]);
-//        }
-//        System.out.println("Sorting...");
-//        for(int i = 0; i< cols; i++){
-//            for(int j = i+1; j< cols; j++){
-//                if (rank[i] < rank[j]) {
-//                    int aux = rank[i];
-//                    rank[i] = rank[j];
-//                    rank[j] = aux;
-//
-//                    String auxString = algnames.get(i);
-//                    algnames.set(i, algnames.get(j));
-//                    algnames.set(j, auxString);
-//                }
-//            }
-//        }
-//        System.out.println("Sorted");
-//        for (int i = 0, pos = 1; i<cols; i++) {
-//            if (i > 0 && rank[i-1] == rank[i]) {
-//               pos = i;
-//            }
-//            System.out.println(pos+":"+algnames.get(i));
-//            pos = pos+1;
-//        }
+    }
+
+    private boolean isStatisticalDifferent(ArrayList<String> algnames, HashMap<String, Boolean> mcp, int i, int pos) {
+        boolean result = true;
+        String mainAlg = algnames.get(i);
+        ArrayList<Integer> arrayList = finalRank.getOrDefault(pos, new ArrayList<>());
+        for (Integer j : arrayList) {
+            String currentAlg = algnames.get(j);
+            String key = mainAlg + "-" + currentAlg;
+            String reverse_key = currentAlg + "-" + mainAlg;
+            boolean isDiff = mcp.get(key) && mcp.get(reverse_key);
+            if (isDiff) {
+                result = true;
+                break;
+            } else {
+                result = false;
+            }
+        }
+        return result;
     }
 
     private int wilcoxon(DataTable dataTable, String alg1, String alg2){
