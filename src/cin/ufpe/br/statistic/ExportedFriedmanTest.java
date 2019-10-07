@@ -16,6 +16,7 @@ public class ExportedFriedmanTest extends StatisticalTest {
     private double[][] ranks;
     private double[] sumRanks;
     private double[] avgRanks;
+    private double[] sdRanks;
     private double S;
     private double Q;
     private double tiesWeight;
@@ -80,7 +81,7 @@ public class ExportedFriedmanTest extends StatisticalTest {
             this.ranks = new double[this.data.getRows()][this.data.getColumns()];
             this.sumRanks = new double[this.data.getColumns()];
             this.avgRanks = new double[this.sumRanks.length];
-
+            this.sdRanks = new double[this.sumRanks.length];
             for(i = 0; i < this.data.getRows(); ++i) {
                 Arrays.fill(this.ranks[i], -1.0D);
 
@@ -114,7 +115,7 @@ public class ExportedFriedmanTest extends StatisticalTest {
             this.ranks = new double[this.data.getRows()][this.data.getColumns()];
             this.sumRanks = new double[this.data.getColumns()];
             this.avgRanks = new double[this.sumRanks.length];
-
+            this.sdRanks = new double[this.sumRanks.length];
             for(i = 0; i < this.data.getRows(); ++i) {
                 Arrays.fill(this.ranks[i], -1.0D);
 
@@ -128,6 +129,22 @@ public class ExportedFriedmanTest extends StatisticalTest {
             this.performed = false;
         }
     }
+
+    private void calculateSdRanks() {
+        double[] variance = new double[this.sumRanks.length];
+        for(int i = 0; i < this.data.getRows(); i++) {
+            for(int j = 0; j < this.data.getColumns(); j++) {
+                double difference = ranks[i][j] - avgRanks[j];
+                variance[j] += difference * difference;
+            }
+        }
+        for(int j = 0; j < this.sumRanks.length; j++) {
+            variance[j] /= (this.data.getColumns() - 1);
+            this.sdRanks[j] = Math.sqrt(variance[j]);
+        }
+    }
+
+    public double[] getSdRanks() { return this.sdRanks; }
 
     public void doTest() {
         if (!this.dataReady) {
@@ -144,7 +161,7 @@ public class ExportedFriedmanTest extends StatisticalTest {
             for(int j = 0; j < this.sumRanks.length; ++j) {
                 this.avgRanks[j] = this.sumRanks[j] / (double)this.data.getRows();
             }
-
+            calculateSdRanks();
             for(int j = 0; j < this.data.getColumns(); ++j) {
                 this.S += this.sumRanks[j] * this.sumRanks[j];
             }

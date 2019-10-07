@@ -27,13 +27,13 @@ public class Retreinamento {
     private static final int SEEDS = 30;
 
     private static ClassifierTypes[] classifierType = {
+            ClassifierTypes.IBK,
             ClassifierTypes.RANDOMFOREST,
             ClassifierTypes.MLP_1hidden,
             ClassifierTypes.MLP_3hidden,
-            ClassifierTypes.NAIVE_BAYES,
-            ClassifierTypes.IBK,
-            ClassifierTypes.J48,
-            ClassifierTypes.JRIP,
+//            ClassifierTypes.NAIVE_BAYES,
+//            ClassifierTypes.J48,
+//            ClassifierTypes.JRIP,
             ClassifierTypes.SMO_poly,
             ClassifierTypes.SMO_rbf
     };
@@ -108,7 +108,7 @@ public class Retreinamento {
         try {
             StatisticTests statisticTests = new StatisticTests();
             statisticTests.algorithmsRank();
-            DataSource source = new DataSource("database_ic.csv");
+            DataSource source = new DataSource("creditcard.csv");
             Instances data = source.getDataSet();
             data.setClassIndex(data.numAttributes()-1);
             Resultado.clearCSVS();

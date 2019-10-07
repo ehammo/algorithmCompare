@@ -72,13 +72,17 @@ public class StatisticTests {
                 Resultado resultado = new Resultado(columns);
                 add(resultado);
             });
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        } catch (FileNotFoundException e) {}
     }
 
     private int combination() {
         return cols*(cols-1) / 2;
+    }
+
+    private void swap(double[] array, int i, int j) {
+        double aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
     }
 
     /*
@@ -86,20 +90,23 @@ public class StatisticTests {
     * */
     public void algorithmsRank() {
         if(friedmanData.size() == 0) friedmanToDataFromCsv();
+        if(friedmanData.size() == 0) return;
+        System.out.println(friedmanData.size());
         friedmanToData();
+        System.out.println(data.getRows()+"x"+data.getColumns());
         ExportedFriedmanTest test = new ExportedFriedmanTest(data);
         int length = combination();
         test.doTest();
         if(test.isPerformed()){
             System.out.println(test.printReport());
             double[] rank = test.getAvgRank();
+            double[] sd = test.getSdRanks();
             HashMap<String, Boolean> mcp = test.getMCP(length, algnames);
             for(int i = 0; i< cols; i++) {
                 for(int j = i+1; j< cols; j++){
                     if (rank[i] < rank[j]) {
-                        double aux = rank[i];
-                        rank[i] = rank[j];
-                        rank[j] = aux;
+                        swap(rank, i, j);
+                        swap(sd, i, j);
 
                         String auxString = algnames.get(i);
                         algnames.set(i, algnames.get(j));
@@ -117,7 +124,7 @@ public class StatisticTests {
                 }
                 long trainingTime = trainingTimes.getOrDefault(algnames.get(i), 0L);
                 long testTime = testTimes.getOrDefault(algnames.get(i), 0L);
-                System.out.print(pos+":"+algnames.get(i)+" value: "+rank[i]);
+                System.out.print(pos+":"+algnames.get(i)+" value: "+rank[i]+" sd: "+sd[i]);
                 System.out.println(" train: "+trainingTime+" test: "+testTime);
                 ArrayList<Integer> algList = finalRank.getOrDefault(pos, new ArrayList<>());
                 algList.add(i);
