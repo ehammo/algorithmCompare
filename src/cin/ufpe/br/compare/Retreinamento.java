@@ -14,6 +14,8 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.StringToNominal;
 
 public class Retreinamento {
 
@@ -24,16 +26,16 @@ public class Retreinamento {
         MLP_1hidden, MLP_3hidden, RANDOMFOREST;
     }
 
-    private static final int SEEDS = 30;
+    private static final int SEEDS = 10;
 
     private static ClassifierTypes[] classifierType = {
             ClassifierTypes.IBK,
             ClassifierTypes.RANDOMFOREST,
-            ClassifierTypes.MLP_1hidden,
-            ClassifierTypes.MLP_3hidden,
-//            ClassifierTypes.NAIVE_BAYES,
-//            ClassifierTypes.J48,
-//            ClassifierTypes.JRIP,
+//            ClassifierTypes.MLP_1hidden,
+//            ClassifierTypes.MLP_3hidden,
+            ClassifierTypes.NAIVE_BAYES,
+            ClassifierTypes.J48,
+            ClassifierTypes.JRIP,
             ClassifierTypes.SMO_poly,
             ClassifierTypes.SMO_rbf
     };
@@ -108,9 +110,19 @@ public class Retreinamento {
         try {
             StatisticTests statisticTests = new StatisticTests();
             statisticTests.algorithmsRank();
-            DataSource source = new DataSource("creditcard.csv");
+            DataSource source = new DataSource("creditcard_update.csv");
+//            DataSource testSource = new DataSource("titanic.csv");
             Instances data = source.getDataSet();
+//            Instances testData = testSource.getDataSet();
+//            data.setClassIndex(1);
             data.setClassIndex(data.numAttributes()-1);
+//            StringToNominal stn = new StringToNominal();
+//            stn.setAttributeRange("first-last");
+//            stn.setInputFormat(data);
+//            data = Filter.useFilter(data, stn);
+//            stn.setInputFormat(testData);
+//            testData = Filter.useFilter(testData, stn);
+//            data.setClassIndex(data.numAttributes()-1);
             Resultado.clearCSVS();
             System.out.println("Start training");
             ArrayList<ClassifierWrapper> classifiers = WekaUtil.buildClassifiers(classifierType, data);
@@ -134,6 +146,7 @@ public class Retreinamento {
                     long testTimeStart = System.currentTimeMillis();
                     // Evaluate classifier using 10-fold cross-validation
                     Evaluation evaluation = WekaUtil.crossValidateModel(wrapper.classifier, data, 10, new Random(j));
+                    if(evaluation==null) continue;
                     double[][] matrix = evaluation.confusionMatrix();
                     double precision, F1, TN, FN, FP, TP = 0;
                     //check the if the matrix is Transposed or not

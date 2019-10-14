@@ -71,15 +71,15 @@ public class WekaUtil {
         for (ClassifierTypes aClassifierType : classifierType) {
             long tuningTrainingTimeStart = System.currentTimeMillis();
             Classifier classifier;
-            boolean doGridSearch = true;
+            boolean doGridSearch = false;
             if(doGridSearch){
                 System.out.println("Start grid search for "+aClassifierType.toString());
                 classifier = doGridSearch(aClassifierType,instances);
                 System.out.println("grid search end");
             }else{
                 classifier = WekaUtil.getBaseClassifier(aClassifierType);
-                System.out.println("Start training for "+aClassifierType.toString());
-                classifier.buildClassifier(instances);
+//                System.out.println("Start training for "+aClassifierType.toString());
+//                classifier.buildClassifier(instances);
                 System.out.println("training end");
             }
             ClassifierWrapper classifierWrapper = new ClassifierWrapper(classifier);

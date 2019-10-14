@@ -23,6 +23,7 @@ public class ExportedFriedmanTest extends StatisticalTest {
     private double pValue;
     private double criticalZ90;
     private double criticalZ95;
+    private double criticalZ99;
 
     public ExportedFriedmanTest() {
         this.setReportFormat();
@@ -178,13 +179,16 @@ public class ExportedFriedmanTest extends StatisticalTest {
     private void multipleComparisonsProcedure() {
         double critical90 = 1.0D - 0.1D / (double)(this.sumRanks.length * (this.sumRanks.length - 1));
         double critical95 = 1.0D - 0.05D / (double)(this.sumRanks.length * (this.sumRanks.length - 1));
+        double critical99 = 1.0D - 0.01D / (double)(this.sumRanks.length * (this.sumRanks.length - 1));
         NormalDistribution normal = new NormalDistribution();
         critical90 = normal.inverseNormalDistribution(critical90);
         critical95 = normal.inverseNormalDistribution(critical95);
+        critical99 = normal.inverseNormalDistribution(critical99);
         double N = (double)this.data.getColumns();
         double denominator = Math.sqrt(N * (N + 1.0D) / 12.0D * (1.0D / (double)this.data.getRows() + 1.0D / (double)this.data.getRows()));
         this.criticalZ90 = critical90 * denominator;
         this.criticalZ95 = critical95 * denominator;
+        this.criticalZ99 = critical99 * denominator;
     }
 
     private void computePValue(int dF) {
@@ -311,14 +315,14 @@ public class ExportedFriedmanTest extends StatisticalTest {
     public boolean[] getMCPAvg(int length) {
         boolean[] report = new boolean[length];
         int i=0;
-        System.out.println(String.valueOf(this.criticalZ95));
+        System.out.println(String.valueOf(this.criticalZ99));
         for(int first = 0; first < this.data.getColumns() - 1; ++first) {
             for(int second = first + 1; second < this.data.getColumns(); ++second) {
                 if(i>=length) break;
                 double value1 = this.avgRanks[first]/this.data.getColumns();
                 double value2 = this.avgRanks[second]/this.data.getColumns();
                 double Z = Math.abs(value1 - value2);
-                report[i] = Z >= this.criticalZ95;
+                report[i] = Z >= this.criticalZ99;
                 i++;
             }
         }
@@ -328,7 +332,7 @@ public class ExportedFriedmanTest extends StatisticalTest {
     HashMap<String, Boolean> getMCP(int length, ArrayList<String> algnames) {
         HashMap<String, Boolean> report = new HashMap<>();
         int i=0;
-        System.out.println(String.valueOf(this.criticalZ95));
+        System.out.println("critical Z:"+String.valueOf(this.criticalZ95));
         for(int first = 0; first < this.data.getColumns() - 1; ++first) {
             for(int second = first + 1; second < this.data.getColumns(); ++second) {
                 if(i>=length) break;

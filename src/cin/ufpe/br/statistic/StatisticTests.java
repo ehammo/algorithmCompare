@@ -143,6 +143,7 @@ public class StatisticTests {
             String key = mainAlg + "-" + currentAlg;
             String reverse_key = currentAlg + "-" + mainAlg;
             boolean isDiff = mcp.get(key) && mcp.get(reverse_key);
+           // System.out.println(key+" - "+isDiff);
             if (isDiff) {
                 result = true;
                 break;
