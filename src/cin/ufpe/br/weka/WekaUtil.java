@@ -71,7 +71,7 @@ public class WekaUtil {
         for (ClassifierTypes aClassifierType : classifierType) {
             long tuningTrainingTimeStart = System.currentTimeMillis();
             Classifier classifier;
-            boolean doGridSearch = false;
+            boolean doGridSearch = true;
             if(doGridSearch){
                 System.out.println("Start grid search for "+aClassifierType.toString());
                 classifier = doGridSearch(aClassifierType,instances);

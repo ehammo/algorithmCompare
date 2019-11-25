@@ -30,12 +30,12 @@ public class Retreinamento {
 
     private static ClassifierTypes[] classifierType = {
             ClassifierTypes.IBK,
-            ClassifierTypes.RANDOMFOREST,
-//            ClassifierTypes.MLP_1hidden,
-//            ClassifierTypes.MLP_3hidden,
+//            ClassifierTypes.RANDOMFOREST,
+            ClassifierTypes.MLP_1hidden,
+            ClassifierTypes.MLP_3hidden,
             ClassifierTypes.NAIVE_BAYES,
-            ClassifierTypes.J48,
-            ClassifierTypes.JRIP,
+//            ClassifierTypes.J48,
+//            ClassifierTypes.JRIP,
             ClassifierTypes.SMO_poly,
             ClassifierTypes.SMO_rbf
     };
@@ -110,19 +110,9 @@ public class Retreinamento {
         try {
             StatisticTests statisticTests = new StatisticTests();
             statisticTests.algorithmsRank();
-            DataSource source = new DataSource("creditcard_update.csv");
-//            DataSource testSource = new DataSource("titanic.csv");
+            DataSource source = new DataSource("final_table.csv");
             Instances data = source.getDataSet();
-//            Instances testData = testSource.getDataSet();
-//            data.setClassIndex(1);
-            data.setClassIndex(data.numAttributes()-1);
-//            StringToNominal stn = new StringToNominal();
-//            stn.setAttributeRange("first-last");
-//            stn.setInputFormat(data);
-//            data = Filter.useFilter(data, stn);
-//            stn.setInputFormat(testData);
-//            testData = Filter.useFilter(testData, stn);
-//            data.setClassIndex(data.numAttributes()-1);
+            data.setClassIndex(data.numAttributes()-2);
             Resultado.clearCSVS();
             System.out.println("Start training");
             ArrayList<ClassifierWrapper> classifiers = WekaUtil.buildClassifiers(classifierType, data);
