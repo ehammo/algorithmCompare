@@ -1,14 +1,95 @@
-table = read.table('C:\\Users\\eduardo\\Documents\\projetos\\algorithmCompare\\final_table.csv', header=TRUE, sep = ",", fill = TRUE)
+table = read.table('C:\\Users\\eduardo\\Downloads\\creditcard.csv', header=TRUE, sep = ",", fill = TRUE)
+library(dplyr)
+size_total=length(table[,1])
+table <- table %>% mutate(ID= c(1:size_total))
+table_sim <- table %>% filter(Class == "1")
+table_nao <- table %>% filter(Class == "0")
+size_sim = length(table_sim$V1)
+ID <- sample(table_nao$ID, size=size_sim, replace = T)
+amostra <- as.data.frame(ID)
+table_nao <- left_join(amostra, table, by = "ID")
+table2 <- rbind(table_nao, table_sim)
+
+table3 = table2
+table3$Class <- gsub("0", "Nao", table3$Class)
+table3$Class <- gsub("1", "Sim", table3$Class)
+
+
+write.csv(table3, "undersampling.csv")
+
+
+
+
+
+table = read.table('C:\\Users\\eduardo\\Documents\\projetos\\algorithmCompare\\all.csv', header=FALSE, sep = ",", fill = TRUE)
 library(nortest)
 i = 1
-while (i <= 28) {
-  dados = table[,i]
-  hist(dados)
+while (i < length(table$V8)) {
+  nb = c()
+  ibk = c()
+  mlp1 = c()
+  mlp3 = c()
+  svmp = c()
+  svmr = c()
+  
+  j = 1
+  while (i <= 10) {
+    nb[j] = table[i,8]
+    i = i + 1
+    j = j + 1
+  }
+  j = 1
+  while (i <= 20) {
+    ibk[j] = table[i,8]
+    i = i + 1
+    j = j + 1
+  }
+  j = 1
+  while (i <= 30) {
+    mlp1[j] = table[i,8]
+    i = i + 1
+    j = j + 1
+  }
+  j = 1
+  while (i <= 40) {
+    mlp3[j] = table[i,8]
+    i = i + 1
+    j = j + 1
+  }
+  j = 1 
+  while (i <= 50) {
+    svmp[j] = table[i,8]
+    i = i + 1
+    j = j + 1
+  }
+  j = 1
+  while (i <= 60) {
+    svmr[j] = table[i,8]
+    i = i + 1
+    j = j + 1
+  }
+}
+
+hist(nb)
+hist(ibk)
+hist(mlp1)
+hist(mlp3)
+hist(svmp)
+hist(svmr)
+
+normalityTest(nb)
+normalityTest(ibk)
+normalityTest(mlp1)
+normalityTest(mlp3)
+normalityTest(svmp)
+normalityTest(svmr)
+
+normalityTest <- function (dados) {  
   t1 <- ks.test(dados, "pnorm") # KS
   t2 <- lillie.test(dados) # Lilliefors
   t3 <- cvm.test(dados) # Cramér-von Mises
-  # base mt grande - t4 <- shapiro.test(dados) # Shapiro-Wilk
-  # base mt grande - t5 <- sf.test(dados) # Shapiro-Francia
+  t4 <- shapiro.test(dados) # Shapiro-Wilk
+  t5 <- sf.test(dados) # Shapiro-Francia
   t6 <- ad.test(dados) # Anderson-Darling
   # Tabela de resultados
   testes <- c(t1$method, t2$method, t3$method,
@@ -29,8 +110,6 @@ while (i <= 28) {
 
 #data.table - fread
 #caret
-table = read.table('C:\\Users\\eduardo\\Documents\\projetos\\algorithmCompare\\creditcard.csv', header=TRUE, sep = ",", fill = TRUE)
-library(dplyr)
 size_total=length(table[,1])
 table <- table %>% mutate(ID= c(1:size_total))
 table_sim <- table %>% filter(Class == "Sim")
