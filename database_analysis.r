@@ -25,64 +25,64 @@ table = read.table('C:\\Users\\eduardo\\Documents\\projetos\\algorithmCompare\\a
 library(nortest)
 i = 1
 while (i < length(table$V8)) {
-  nb = c()
-  ibk = c()
-  mlp1 = c()
-  mlp3 = c()
-  svmp = c()
-  svmr = c()
+  naive_bayes = c()
+  K_vizinhos = c()
+  Multilayer_perceptron = c()
+  Multilayer_perceptron_3 = c()
+  Support_Vector_machine_poly = c()
+  Support_Vector_machine_radio = c()
   
   j = 1
   while (i <= 10) {
-    nb[j] = table[i,8]
+    naive_bayes[j] = table[i,8]
     i = i + 1
     j = j + 1
   }
   j = 1
   while (i <= 20) {
-    ibk[j] = table[i,8]
+    K_vizinhos[j] = table[i,8]
     i = i + 1
     j = j + 1
   }
   j = 1
   while (i <= 30) {
-    mlp1[j] = table[i,8]
+    Multilayer_perceptron[j] = table[i,8]
     i = i + 1
     j = j + 1
   }
   j = 1
   while (i <= 40) {
-    mlp3[j] = table[i,8]
+    Multilayer_perceptron_3[j] = table[i,8]
     i = i + 1
     j = j + 1
   }
   j = 1 
   while (i <= 50) {
-    svmp[j] = table[i,8]
+    Support_Vector_machine_poly[j] = table[i,8]
     i = i + 1
     j = j + 1
   }
   j = 1
   while (i <= 60) {
-    svmr[j] = table[i,8]
+    Support_Vector_machine_radio[j] = table[i,8]
     i = i + 1
     j = j + 1
   }
 }
 
-hist(nb)
-hist(ibk)
-hist(mlp1)
-hist(mlp3)
-hist(svmp)
-hist(svmr)
+hist(naive_bayes)
+hist(K_vizinhos)
+hist(Multilayer_perceptron)
+hist(Multilayer_perceptron_3)
+hist(Support_Vector_machine_poly)
+hist(Support_Vector_machine_radio)
 
-normalityTest(nb)
-normalityTest(ibk)
-normalityTest(mlp1)
-normalityTest(mlp3)
-normalityTest(svmp)
-normalityTest(svmr)
+normalityTest(naive_bayes)
+normalityTest(K_vizinhos)
+normalityTest(Multilayer_perceptron)
+normalityTest(Multilayer_perceptron_3)
+normalityTest(Support_Vector_machine_poly)
+normalityTest(Support_Vector_machine_radio)
 
 normalityTest <- function (dados) {  
   t1 <- ks.test(dados, "pnorm") # KS
